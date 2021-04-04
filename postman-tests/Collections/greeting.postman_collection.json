@@ -1,0 +1,123 @@
+{
+	"info": {
+		"_postman_id": "fd9890db-57c3-4e82-a8cf-85d2e2506c64",
+		"name": "greeting",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "test",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"name\", \"John\");"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"\t\tpm.response.to.have.status(200);\r",
+							"\t});\r",
+							"\r",
+							"const resBody = pm.response.json();\r",
+							"\r",
+							"pm.test(\"id exists\", function () {\r",
+							"    pm.expect(resBody).to.have.property('id');\r",
+							"});\r",
+							"\r",
+							"const expectedContent = \"Hello, \" + pm.environment.get(\"name\") + \"!\"\r",
+							"pm.test(\"content equals '\" + expectedContent + \"'\", function () {\r",
+							"    pm.expect(resBody.content).to.eql(expectedContent);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{host}}:{{port}}/greeting?name={{name}}",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"greeting"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "{{name}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "test id",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.sendRequest({\r",
+							"    url: 'http://localhost:8080/greeting',\r",
+							"    method: 'GET',\r",
+							"}, function (err, res) {\r",
+							"    console.log(res.json().id);\r",
+							"    pm.environment.set(\"id\", res.json().id);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"\t\tpm.response.to.have.status(200);\r",
+							"\t});\r",
+							"\r",
+							"const resBody = pm.response.json();\r",
+							"\r",
+							"const expectedId = pm.environment.get(\"id\") + 1\r",
+							"pm.test(\"id is correct\", function () {\r",
+							"    pm.expect(resBody.id).to.eql(expectedId);\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{host}}:{{port}}/greeting",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"greeting"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
